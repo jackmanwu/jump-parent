@@ -1,5 +1,6 @@
 package com.jackmanwu.jump;
 
+import com.jackmanwu.jump.auto.JumpAuto;
 import com.jackmanwu.jump.ui.JumpUI;
 
 import java.util.concurrent.CountDownLatch;
@@ -9,8 +10,13 @@ import java.util.concurrent.CountDownLatch;
  */
 public class JumpServer {
     public static void main(String[] args) throws Exception {
-        new JumpUI();
-        CountDownLatch countDownLatch = new CountDownLatch(1);
-        countDownLatch.await();
+        boolean flag = false;
+        if (flag) {
+            new JumpUI();
+            CountDownLatch countDownLatch = new CountDownLatch(1);
+            countDownLatch.await();
+        } else {
+            new JumpAuto().arithmetic();
+        }
     }
 }

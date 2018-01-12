@@ -17,7 +17,7 @@ public class JumpSetting {
 
     public static String BASE_DIR = System.getProperty("user.dir");//本地文件路径
 
-    public static Double jumpRate;
+    public static Double jumpRate = 1.39;
 
     public static Double zoomRate;
 
