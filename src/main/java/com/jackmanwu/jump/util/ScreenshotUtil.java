@@ -14,25 +14,29 @@ public class ScreenshotUtil {
     /**
      * 截屏并拉取到本地
      */
-    public static void screenshot() throws Exception {
+    public static BufferedImage screenshot() throws Exception {
         int code = AdbUtil.adbExec("shell", "screencap", "-p", JumpSetting.SCREENCAP_PATH);
         if (code != 0) {
             System.out.println("截屏失败...");
-            return;
+            return null;
         }
         System.out.println("截屏成功...");
+        Thread.sleep(1000);
         int pullCode = AdbUtil.adbExec("pull", JumpSetting.SCREENCAP_PATH, JumpSetting.BASE_DIR);
         if (pullCode != 0) {
             System.out.println("拉取截图失败...");
-            return;
+            return null;
         }
+        Thread.sleep(1000);
         System.out.println("拉取截图成功");
-        int delCode = AdbUtil.adbExec("shell", "rm", JumpSetting.SCREENCAP_PATH);
+        /*int delCode = AdbUtil.adbExec("shell", "rm", JumpSetting.SCREENCAP_PATH);
         if (delCode == 0) {
             System.out.println("删除手机端截图成功...");
         } else {
             System.out.println("删除手机端截图失败...");
-        }
+        }*/
+        File file = new File(JumpSetting.BASE_DIR + File.separator + JumpSetting.SCREENCAP_NAME);
+        return ImageIO.read(file);
     }
 
     public static BufferedImage getImage() {

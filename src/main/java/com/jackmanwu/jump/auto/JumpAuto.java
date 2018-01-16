@@ -11,22 +11,19 @@ import java.awt.image.BufferedImage;
  * Created by JackManWu on 2018/1/12.
  */
 public class JumpAuto {
-    private Point piecesPoint = new Point();
-
     public void arithmetic() throws Exception {
 //        while (true) {
-        ScreenshotUtil.screenshot();
-        BufferedImage image = ScreenshotUtil.getImage();
+        BufferedImage image = ScreenshotUtil.screenshot();
         if (image == null) {
             System.out.println("截屏图像为空...");
             return;
         }
-        getPiecePoint(image);
+        Point piecesPoint = getPiecePoint(image);
         System.out.println("棋子坐标：" + piecesPoint);
-        Point targetPoint = getTargetCenterPoint(image);
+        Point targetPoint = getTargetCenterPoint(image, piecesPoint.y);
         System.out.println("目标坐标：" + targetPoint);
         jump(piecesPoint, targetPoint);
-        Thread.sleep(1000);
+//            Thread.sleep(1000);
 //        }
     }
 
@@ -36,7 +33,9 @@ public class JumpAuto {
      * @param image
      * @return
      */
-    private void getPiecePoint(BufferedImage image) {
+    private Point getPiecePoint(BufferedImage image) {
+        int x = 0;
+        int y = 0;
         for (int i = 300; i < image.getHeight(); i++) {
             int startX = 0;
             int endX = 0;
@@ -55,13 +54,14 @@ public class JumpAuto {
                 }
 
                 if (red > 50 && red < 60 && green > 53 && green < 63 && blue > 95 && blue < 110) {
-                    piecesPoint.y = i;
+                    y = i;
                 }
             }
-            if (startX != 0 && piecesPoint.x == 0) {
-                piecesPoint.x = (startX + endX) / 2;
+            if (startX != 0 && x == 0) {
+                x = (startX + endX) / 2;
             }
         }
+        return new Point(x, y);
     }
 
     /**
@@ -70,14 +70,14 @@ public class JumpAuto {
      * @param image
      * @return
      */
-    private Point getTargetCenterPoint(BufferedImage image) {
+    private Point getTargetCenterPoint(BufferedImage image, int piecesY) {
         int topPixel = 0;
         int topY = 0;
         int bottomY = 0;
         int leftX = 0;
         int rightX = 0;
 
-        for (int i = 300; i < piecesPoint.y; i++) {
+        for (int i = 300; i < piecesY; i++) {
             for (int j = 50; j < image.getWidth(); j++) {
                 int currentPixel = image.getRGB(j, i);
                 int pixel = image.getRGB(0, i);
@@ -91,17 +91,18 @@ public class JumpAuto {
                     }
 
                     if (topPixel != 0 && ColorUtil.isSameRgb(currentPixel, topPixel)) {
-                        if ((leftX == 0 || j < leftX) && (leftX - j) < 460) {
+                        if (leftX == 0 || (j < leftX && leftX - j < 4)) {
                             leftX = j;
                         }
                     }
 
                     if (topPixel != 0 && ColorUtil.isSameRgb(image.getRGB(j - 1, i), topPixel)) {
-                        if ((rightX == 0 || j - 1 > rightX) && (j - 1 - rightX) < 460) {
+                        if (rightX == 0 || (j - 1 > rightX && j - 1 - rightX < 4)) {
                             rightX = j - 1;
                         }
                     }
-                    if (topPixel != 0 && ColorUtil.isSameRgb(image.getRGB(j, i - 1), topPixel) && i - 1 > bottomY) {
+                    if (topPixel != 0 && ColorUtil.isSameRgb(image.getRGB(j, i - 1), topPixel)
+                            && i - 1 > bottomY && i - 1 - bottomY < 2) {
                         bottomY = i - 1;
                     }
                 }

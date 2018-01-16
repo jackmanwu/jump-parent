@@ -17,7 +17,7 @@ public class JumpSetting {
 
     public static String BASE_DIR = System.getProperty("user.dir");//本地文件路径
 
-    public static Double jumpRate = 1.39;
+    public static Double jumpRate = 1.392;
 
     public static Double zoomRate;
 
@@ -27,7 +27,7 @@ public class JumpSetting {
     private static final Map<String, Double> jumpRateMap = new HashMap<>();
 
     static {
-        jumpRateMap.put("1080x1920", 1.39);
+        jumpRateMap.put("1080x1920", 1.392);
     }
 
     /**
