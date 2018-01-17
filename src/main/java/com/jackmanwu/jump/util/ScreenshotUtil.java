@@ -35,13 +35,13 @@ public class ScreenshotUtil {
         } else {
             System.out.println("删除手机端截图失败...");
         }*/
-        File file = new File(JumpSetting.BASE_DIR + File.separator + JumpSetting.SCREENCAP_NAME);
+        File file = new File(JumpSetting.BASE_DIR + JumpSetting.SCREENCAP_NAME);
         return ImageIO.read(file);
     }
 
     public static BufferedImage getImage() {
         try {
-            File file = new File(JumpSetting.BASE_DIR + File.separator + JumpSetting.SCREENCAP_NAME);
+            File file = new File(JumpSetting.BASE_DIR + JumpSetting.SCREENCAP_NAME);
             return ImageIO.read(file);
         } catch (Exception e) {
             e.printStackTrace();
@@ -55,6 +55,6 @@ public class ScreenshotUtil {
         String y1 = new Random().nextInt(100) + "";
         String x2 = new Random().nextInt(200) + "";
         String y2 = new Random().nextInt(200) + "";
-        AdbUtil.adbExec("shell", "input", "swipe", x1, y1, x2, y2,String.valueOf(time));
+        AdbUtil.adbExec("shell", "input", "swipe", x1, y1, x2, y2, String.valueOf(time));
     }
 }

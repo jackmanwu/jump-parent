@@ -1,5 +1,6 @@
 package com.jackmanwu.jump.config;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,7 +16,7 @@ public class JumpSetting {
 
     public static String SCREENCAP_PATH = SCREENCAP_DIR + SCREENCAP_NAME;//截图路径
 
-    public static String BASE_DIR = System.getProperty("user.dir");//本地文件路径
+    public static String BASE_DIR = System.getProperty("user.dir")+ File.separator;//本地文件路径
 
     public static Double jumpRate = 1.392;
 
