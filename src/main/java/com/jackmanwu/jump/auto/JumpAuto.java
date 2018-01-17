@@ -5,6 +5,8 @@ import com.jackmanwu.jump.util.ScreenshotUtil;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by JackManWu on 2018/1/12.
@@ -41,34 +43,24 @@ public class JumpAuto {
      * @return
      */
     private Point getPiecePoint(BufferedImage image) {
-        int x = 0;
         int y = 0;
+        int totalX = 0;
+        int total = 0;
         for (int i = 300; i < image.getHeight(); i++) {
-            int startX = 0;
-            int endX = 0;
             for (int j = 50; j < image.getWidth(); j++) {
                 int pixel = image.getRGB(j, i);
                 int red = ColorUtil.getRed(pixel);
                 int green = ColorUtil.getGreen(pixel);
                 int blue = ColorUtil.getBlue(pixel);
-                if (red > 50 && red < 55 && green > 50 && green < 55 && blue > 55 && blue < 65) {
-                    if (startX == 0) {
-                        startX = j;
-                        endX = 0;
-                    }
-                } else if (endX == 0) {
-                    endX = j;
-                }
 
                 if (red > 50 && red < 60 && green > 53 && green < 63 && blue > 95 && blue < 110) {
                     y = i;
+                    totalX += j;
+                    total++;
                 }
             }
-            if (startX != 0 && x == 0) {
-                x = (startX + endX) / 2;
-            }
         }
-        return new Point(x, y);
+        return new Point(totalX / total, y);
     }
 
     private Point getTargetPoint(BufferedImage image, int piecesY) {
@@ -85,6 +77,7 @@ public class JumpAuto {
         int whiteBottomY = 0;
         int whiteLeftX = 0;
         int whiteRightX = 0;
+        List<Point> list = new ArrayList<>();
         for (int i = minH; i < piecesY; i++) {
             int pixel = image.getRGB(0, i);
             for (int j = 0; j < maxX; j++) {
@@ -118,15 +111,22 @@ public class JumpAuto {
                 }
 
                 //计算目标中心白点
-                int red = ColorUtil.getRed(currentPixel);
+                if (topPixel != 0 && ColorUtil.isSameRGB(currentPixel, 245, 245, 245, 0)) {
+                    list.add(new Point(j, i));
+                }
+                /*int red = ColorUtil.getRed(currentPixel);
                 int green = ColorUtil.getGreen(currentPixel);
                 int blue = ColorUtil.getBlue(currentPixel);
                 if (topPixel != 0
                         && ColorUtil.isSameRGB(currentPixel, 245, 245, 245, 4)
                         && red <= 245 && green <= 245 && blue <= 245) {
+                    System.out.println("顶点：" + ColorUtil.getRed(topPixel) + "-" + ColorUtil.getGreen(topPixel) + "-" + ColorUtil.getBlue(topPixel));
+                    System.out.println(image.getRGB(j - 1, i));
+                    System.out.println(ColorUtil.isSameRGB(image.getRGB(j - 1, i), topPixel));
                     if (ColorUtil.isSameRGB(image.getRGB(j - 1, i), topPixel, 5)
                             && ColorUtil.isSameRGB(image.getRGB(j, i - 1), topPixel, 5)
                             && whiteTopY == 0) {
+                        System.out.println("数据：" + j + "-" + i);
                         whiteTopY = i;
                         whiteTopY = i;
                         whiteLeftX = j;
@@ -147,11 +147,19 @@ public class JumpAuto {
                             whiteBottomY = i;
                         }
                     }
-                }
+                }*/
             }
         }
-        if (whiteTopY != 0) {
-            return new Point((whiteLeftX + whiteRightX) / 2, (whiteTopY + whiteBottomY) / 2);
+        int totalX = 0;
+        int totalY = 0;
+        for (Point point : list) {
+            totalX += point.x;
+            totalY += point.y;
+        }
+        int len = list.size();
+        if (len != 0) {
+            System.out.println(totalX / list.size() + "-" + totalY / list.size());
+            return new Point(totalX / len, totalY / len);
         }
         return new Point((leftX + rightX) / 2, (topY + bottomY) / 2);
     }
