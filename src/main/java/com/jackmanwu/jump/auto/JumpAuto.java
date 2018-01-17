@@ -111,22 +111,15 @@ public class JumpAuto {
                 }
 
                 //计算目标中心白点
-                if (topPixel != 0 && ColorUtil.isSameRGB(currentPixel, 245, 245, 245, 0)) {
-                    list.add(new Point(j, i));
-                }
-                /*int red = ColorUtil.getRed(currentPixel);
+                int red = ColorUtil.getRed(currentPixel);
                 int green = ColorUtil.getGreen(currentPixel);
                 int blue = ColorUtil.getBlue(currentPixel);
                 if (topPixel != 0
                         && ColorUtil.isSameRGB(currentPixel, 245, 245, 245, 4)
                         && red <= 245 && green <= 245 && blue <= 245) {
-                    System.out.println("顶点：" + ColorUtil.getRed(topPixel) + "-" + ColorUtil.getGreen(topPixel) + "-" + ColorUtil.getBlue(topPixel));
-                    System.out.println(image.getRGB(j - 1, i));
-                    System.out.println(ColorUtil.isSameRGB(image.getRGB(j - 1, i), topPixel));
                     if (ColorUtil.isSameRGB(image.getRGB(j - 1, i), topPixel, 5)
                             && ColorUtil.isSameRGB(image.getRGB(j, i - 1), topPixel, 5)
                             && whiteTopY == 0) {
-                        System.out.println("数据：" + j + "-" + i);
                         whiteTopY = i;
                         whiteTopY = i;
                         whiteLeftX = j;
@@ -147,19 +140,18 @@ public class JumpAuto {
                             whiteBottomY = i;
                         }
                     }
-                }*/
+                }
             }
         }
-        int totalX = 0;
+        /*int totalX = 0;
         int totalY = 0;
         for (Point point : list) {
             totalX += point.x;
             totalY += point.y;
         }
-        int len = list.size();
-        if (len != 0) {
-            System.out.println(totalX / list.size() + "-" + totalY / list.size());
-            return new Point(totalX / len, totalY / len);
+        int len = list.size();*/
+        if (whiteTopY != 0) {
+            return new Point((whiteLeftX + whiteRightX) / 2, (whiteTopY + whiteBottomY) / 2);
         }
         return new Point((leftX + rightX) / 2, (topY + bottomY) / 2);
     }
