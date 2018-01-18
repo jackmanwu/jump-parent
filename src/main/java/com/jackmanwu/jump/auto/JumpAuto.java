@@ -5,8 +5,6 @@ import com.jackmanwu.jump.util.ScreenshotUtil;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by JackManWu on 2018/1/12.
@@ -27,12 +25,11 @@ public class JumpAuto {
             }
             Point piecesPoint = getPiecePoint(image);
             System.out.println("棋子坐标：" + piecesPoint);
-            piecesPoint.y -= 10;
+            piecesPoint.y -= 20;
             Point point = getTargetPoint(image, piecesPoint.y);
             System.out.println("目标坐标：" + point);
-            getTargetPoint(image, piecesPoint.y);
             jump(piecesPoint, point);
-            Thread.sleep(1000);
+            Thread.sleep(2000);
         }
     }
 
@@ -77,7 +74,6 @@ public class JumpAuto {
         int whiteBottomY = 0;
         int whiteLeftX = 0;
         int whiteRightX = 0;
-        List<Point> list = new ArrayList<>();
         for (int i = minH; i < piecesY; i++) {
             int pixel = image.getRGB(0, i);
             for (int j = 0; j < maxX; j++) {
@@ -85,6 +81,7 @@ public class JumpAuto {
                 //计算目标中心
                 if (!ColorUtil.isSameRGB(pixel, image.getRGB(j, i))) {
                     if (topPixel == 0) {
+                        System.out.println(j + "--" + i);
                         topPixel = currentPixel;
                         topY = i;
                         bottomY = i;
@@ -110,46 +107,45 @@ public class JumpAuto {
                     }
                 }
 
-                //计算目标中心白点
-                int red = ColorUtil.getRed(currentPixel);
-                int green = ColorUtil.getGreen(currentPixel);
-                int blue = ColorUtil.getBlue(currentPixel);
-                if (topPixel != 0
-                        && ColorUtil.isSameRGB(currentPixel, 245, 245, 245, 4)
-                        && red <= 245 && green <= 245 && blue <= 245) {
-                    if (ColorUtil.isSameRGB(image.getRGB(j - 1, i), topPixel, 5)
-                            && ColorUtil.isSameRGB(image.getRGB(j, i - 1), topPixel, 5)
-                            && whiteTopY == 0) {
+            }
+        }
+
+        if (topY >= bottomY) {
+            bottomY = piecesY;
+        }
+
+        //计算目标中心白点
+        int basePixel = 0;
+        for (int i = topY; i < bottomY; i++) {
+            for (int j = leftX; j < rightX; j++) {
+                int pixel = image.getRGB(j, i);
+                if (ColorUtil.isSameRGB(pixel, 245, 245, 245, 4)
+                        && ColorUtil.getRed(pixel) <= 245 && ColorUtil.getGreen(pixel) <= 245 && ColorUtil.getBlue(pixel) <= 245) {
+                    if (whiteTopY == 0) {
                         whiteTopY = i;
-                        whiteTopY = i;
+                        whiteBottomY = i;
                         whiteLeftX = j;
                         whiteRightX = j;
+                        basePixel = image.getRGB(j - 1, i);
+                        continue;
                     }
-                    if (ColorUtil.isSameRGB(image.getRGB(j - 1, i), topPixel, 5)) {
-                        if (j < whiteLeftX) {
-                            whiteLeftX = j;
-                        }
+
+                    if (j < whiteLeftX && whiteLeftX - j < 5) {
+                        whiteLeftX = j;
                     }
-                    if (ColorUtil.isSameRGB(image.getRGB(j + 1, i), topPixel, 5)) {
-                        if (j > whiteRightX) {
-                            whiteRightX = j;
-                        }
+
+                    if (j > whiteRightX && j - whiteRightX < 5) {
+                        whiteRightX = j;
                     }
-                    if (ColorUtil.isSameRGB(image.getRGB(j, i + 1), topPixel, 5)) {
-                        if (i > whiteBottomY) {
-                            whiteBottomY = i;
-                        }
+
+                    if (i > whiteBottomY && i - whiteBottomY < 5) {
+                        whiteBottomY = i;
                     }
                 }
             }
         }
-        /*int totalX = 0;
-        int totalY = 0;
-        for (Point point : list) {
-            totalX += point.x;
-            totalY += point.y;
-        }
-        int len = list.size();*/
+        System.out.println(leftX + "," + rightX + "," + topY + "," + bottomY);
+        System.out.println(whiteLeftX + "-" + whiteRightX + "-" + whiteTopY + "-" + whiteBottomY);
         if (whiteTopY != 0) {
             return new Point((whiteLeftX + whiteRightX) / 2, (whiteTopY + whiteBottomY) / 2);
         }
